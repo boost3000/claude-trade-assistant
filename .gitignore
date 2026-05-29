@@ -1,0 +1,7 @@
+.claude/scheduled_tasks.lock
+.claude/*.lock
+.claude/settings.local.json
+
+# Local Claude Code state — not source. Recreated per-session.
+.playwright-profile/
+.playwright-mcp/
