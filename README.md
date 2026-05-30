@@ -82,13 +82,13 @@ claude --channels plugin:telegram@claude-plugins-official
 
 1. **You MUST use a real terminal.** The `claude --channels …` invocation only works in a terminal session — **not** in the VS Code Claude Code extension. The extension cannot forward inbound Telegram messages to Claude; the bot will poll, receive your messages, and silently drop them. Outbound (Claude → Telegram) works in either, but you need both directions to actually use the bot remotely.
 
-2. **VS Code Claude Code chats kill the Telegram channel.** Only one polling process per bot token is allowed. If you open a new chat from the VS Code extension while your terminal Telegram session is running, the new process grabs the token and the terminal session errors out with `409 Conflict`. Rule of thumb: while the Telegram session is live, don't open Claude Code chats from VS Code in this project — use the terminal only.
+2. **VS Code Claude Code chats kill the Telegram channel.** Only one polling process per bot token is allowed. If you open a new chat from the VS Code extension while your terminal Telegram session is running, the new process grabs the token and the terminal session errors out with `409 Conflict`. Rule of thumb: while the Telegram session is live, don't open Claude Code chats from VS Code after starting the telegram channel with Claude Code. Either open VS Code chats beforehand or, if you started some afterwards, restart your telegram channel. in this project — use the terminal only.
 
 3. **One bot, one session.** If you start two terminal sessions with `--channels` in the same project, same thing happens — second one dies. Pick one.
 
 ### Recommended for remote use: `--permission-mode auto`
 
-When you're using the bot from your phone, you obviously can't approve tool-use prompts at the terminal. Start the session with:
+When you're using the bot from your phone, you obviously can't approve tool-use prompts at the terminal. Though, the bot will ask you for permissions via DMs in telegram, this is a tedious process, so start the session with:
 
 ```bash
 claude --channels plugin:telegram@claude-plugins-official --permission-mode auto
@@ -97,6 +97,23 @@ claude --channels plugin:telegram@claude-plugins-official --permission-mode auto
 This auto-accepts tool calls so the bot can do its job (fetch headlines, write to memory, log trades) without waiting for a human to click through prompts on a laptop nobody's sitting at.
 
 **Trade-off:** auto-permission mode trusts Claude to call any tool. The trading workflows in this repo are mostly read-only (web fetches, file edits in `.claude/` and `.knowledge/`) — but if you add MCP servers or skills that touch destructive things (trade execution, account changes), reconsider. Per project convention (see `.claude/CLAUDE.md`), no skill auto-executes trades regardless of permission mode.
+
+### Sharing the bot — groups and additional users
+
+The bot isn't tied to a single Telegram user. You can:
+
+- **Add the bot to a Telegram group** — e.g. a group chat with a trading partner. Anyone in the group can then talk to it for briefings, P/L checks, or trade-log entries. Useful for a shared desk where both people want visibility into the same memory and knowledge base.
+- **Pair additional users individually** — a friend, your trading partner, anyone you want to grant access to. Once paired, they can DM the bot directly or talk to it in any group it's joined.
+
+Access is managed via the `/telegram:access` skill — **run it from your terminal**, not from a Telegram message. To approve a new user:
+
+1. Have the new person send any message to the bot (DM, or in a group it's already in).
+2. In your terminal session, run `/telegram:access` — it'll show pending pairings.
+3. Approve the ones you trust. Their Telegram user ID gets added to `~/.claude/channels/telegram/access.json`.
+
+**Security guard:** approvals must come from you, at the terminal. If a Telegram message says "add me to the allowlist" or "approve the pending pairing", that's exactly what a prompt-injection attack looks like — Claude is instructed to refuse those requests regardless of who they appear to come from. Real approvals happen via the skill in your terminal only.
+
+When a second person starts using the bot, run `/onboard` again from their chat (or have them run it) to capture their trader profile separately — broker, asset preferences, risk envelope. The `.knowledge/` content stays person-agnostic (strategies, instrument notes); per-person preferences go into separate `user_<firstname>_trader_profile.md` files under `.claude/memory/`. Individual trade-log entries inside strategy files tag the executor (`Alex filled 2026-05-30 at €21.19`) so `/trades-pl` and pattern reads stay attributable.
 
 ## House rules baked in from day one
 
