@@ -1,10 +1,23 @@
-# Claude Trade Assistant
+<div align="center">
 
-A Claude Code workspace for retail trading. Acts as a research analyst, briefing-writer, trade-idea generator, and trade journal — built around your broker, your asset preferences, and your style. It does **not** place orders (see [Trading safety](#trading-safety)).
+<img src="assets/boost3000-logo.svg" alt="boost3000" width="600">
+
+# 📈 Claude Trade Assistant
+
+**A Claude Code workspace for retail trading** — research analyst, briefing-writer,
+trade-idea generator, and trade journal, built around *your* broker, *your* assets, *your* style.
+
+`research` · `market briefings` · `ranked trade ideas` · `P/L journal`
+
+</div>
+
+> **❗ Important**
+>
+> **This workspace does not place orders.** It researches, briefs, and logs — it has no broker connection and no execution capability. See [Trading safety](#-trading-safety) for the details.
 
 The repo ships **empty** of trading state. Run `/onboard` in your first chat to teach Claude who you are and what you trade. From there, memory and the knowledge base grow as you use it.
 
-## Requirements
+## ✅ Requirements
 
 - **[Claude Code](https://claude.com/claude-code)** — the CLI this workspace runs in. Install it first.
 - **A paid Claude plan** — a `claude.ai` **Pro plan ($20/mo) at minimum** to run Claude Code. A subscription is **preferred over an API key** — at the moment it's far cheaper for this kind of usage. (Other ways to authenticate and cheaper or free routes exist, but they're not explored here.)
@@ -16,7 +29,7 @@ Optional, for driving Claude from your phone (see below):
 - **`/remote-control`** — Claude Code **v2.1.51+** and a `claude.ai` subscription. No extra install.
 - **Telegram bot** — a Telegram account and a bot token, plus the `telegram@claude-plugins-official` plugin.
 
-## Quickstart
+## 🚀 Quickstart
 
 ```bash
 git clone <repo-url> claude-trade-assistant
@@ -29,6 +42,10 @@ In the first chat, type:
 ```text
 /onboard
 ```
+
+> **💡 Tip**
+>
+> First time here? Just run `/onboard`. Claude captures your profile once and reuses it, so future chats don't have to re-ask who you are or what you trade.
 
 Claude will walk you through:
 
@@ -43,7 +60,7 @@ Claude will walk you through:
 
 Each answer is saved as a memory file under `.claude/memory/` so future conversations don't have to re-ask.
 
-## What's in the repo
+## 📂 What's in the repo
 
 ```text
 .claude/
@@ -58,7 +75,7 @@ Each answer is saved as a memory file under `.claude/memory/` so future conversa
 
 `.knowledge/` ships with an empty folder structure and a README explaining the convention.
 
-## Available skills
+## 🛠️ Available skills
 
 Slash commands you can use any time:
 
@@ -72,7 +89,7 @@ Slash commands you can use any time:
 
 Skills live under `.claude/skills/<name>/SKILL.md`. Edit them in-place to match your workflow. Add your own by creating a new `.claude/skills/<your-skill>/SKILL.md` with a frontmatter `name` and `description`.
 
-## House rules baked in from day one
+## 🏠 House rules baked in from day one
 
 These ship in `.claude/memory/` and apply to every conversation. You can edit or remove any of them.
 
@@ -85,19 +102,24 @@ These ship in `.claude/memory/` and apply to every conversation. You can edit or
 
 After onboarding, your own preferences and broker quirks get added alongside.
 
-## Trading safety
+## 🛡️ Trading safety
 
-**This repo cannot place trades.** Out of the box it has no broker connection, no order-routing API, and no execution capability of any kind — it reads data, researches, and writes notes to files. Claude can draft a trade idea or log one you've *already* taken, but it has no path to send an order to your broker. You place every order yourself.
+> **🛑 Caution**
+>
+> **This repo cannot place trades.** Out of the box it has no broker connection, no order-routing API, and no execution capability of any kind — it reads data, researches, and writes notes to files. Claude can draft a trade idea or log one you've *already* taken, but it has no path to send an order to your broker. **You place every order yourself.**
 
 It still drives real-money *decisions*, so the project-level instructions in `.claude/CLAUDE.md` tell Claude to:
 
 - Be explicit about fees, spreads, tax, FX assumptions.
 - Flag anything that could lose money if wrong.
-- **Never execute trades.** There's no execution path here by default; this rule is a guardrail in case you ever wire up a broker integration yourself. Even then, no order would go out without explicit human confirmation, regardless of permission mode.
+
+> **⚠️ Warning**
+>
+> **Never execute trades.** There's no execution path here by default; this rule is a guardrail in case you ever wire up a broker integration yourself. Even then, no order would go out without explicit human confirmation, regardless of permission mode.
 
 Treat Claude's output as research, not advice. You place the orders.
 
-## Driving Claude from your phone
+## 📱 Driving Claude from your phone
 
 Two options to ping Claude from your phone while the session runs on your laptop: the **built-in `/remote-control` command** (quick to start, single-user, session-bound) and the **Telegram bot plugin** (more setup, but persistent, shareable, group-capable).
 
@@ -143,7 +165,7 @@ Claude prints a URL + QR code; open it on your phone (claude.ai/code or the Clau
 
 Good for: occasional one-off pings while you're away from the desk, against a session you started yourself. If that's all you need, you can stop reading here. For shared use, persistent always-on access, or group workflows, see the Telegram bot below.
 
-## Telegram bot — more powerful, more setup
+## 🤖 Telegram bot — more powerful, more setup
 
 You can drive Claude from your phone via a Telegram bot — ask for a market briefing while you're on the train, get a P/L summary while you're cooking, have it log a trade you just took on the go. Unlike `/remote-control`, the bot has a persistent identity, can be added to group chats, and can be shared with additional users.
 
@@ -161,19 +183,31 @@ Follow the plugin's setup prompts (paste your bot token, approve your Telegram u
 claude --channels plugin:telegram@claude-plugins-official
 ```
 
-### Critical quirks — read this before you waste an evening debugging
+### Critical quirks
 
-1. **You MUST use a real terminal.** The `claude --channels …` invocation only works in a terminal session — **not** in the VS Code Claude Code extension. The extension cannot forward inbound Telegram messages to Claude; the bot will poll, receive your messages, and silently drop them. Outbound (Claude → Telegram) works in either, but you need both directions to actually use the bot remotely.
+> **⚠️ Warning**
+>
+> Read these three before you waste an evening debugging. The Telegram channel has sharp edges around terminals and process ownership.
 
-   **Recommended setup — keep everything in one VS Code window.** The VS Code *integrated terminal* counts as a real terminal, so you don't need to leave the IDE. Use the Claude Code **extension** for your normal day-to-day chats, and the **integrated terminal** to run `claude --channels …` for the bot. That way every Claude session tied to this repo lives in a single VS Code window. Just mind quirk #2 below on ordering: open your extension chats *before* starting the bot (or restart the channel if you open new ones afterwards), since a new extension chat will grab the bot token.
+**1. You MUST use a real terminal** — the VS Code extension silently drops inbound messages
 
-2. **VS Code Claude Code chats kill the Telegram channel.** Only one polling process per bot token is allowed. If you open a new chat from the VS Code extension while your terminal Telegram session is running, the new process grabs the token and the terminal session errors out with `409 Conflict`. Rule of thumb: while the Telegram session is live, don't open Claude Code chats from VS Code after starting the telegram channel with Claude Code. Either open VS Code chats beforehand or, if you started some afterwards, restart your telegram channel. in this project — use the terminal only.
+The `claude --channels …` invocation only works in a terminal session — **not** in the VS Code Claude Code extension. The extension cannot forward inbound Telegram messages to Claude; the bot will poll, receive your messages, and silently drop them. Outbound (Claude → Telegram) works in either, but you need both directions to actually use the bot remotely.
 
-3. **One bot, one session.** If you start two terminal sessions with `--channels` in the same project, same thing happens — second one dies. Pick one.
+> **💡 Tip**
+>
+> **Keep everything in one VS Code window.** The VS Code *integrated terminal* counts as a real terminal, so you don't need to leave the IDE. Use the Claude Code **extension** for your normal day-to-day chats, and the **integrated terminal** to run `claude --channels …` for the bot. That way every Claude session tied to this repo lives in a single VS Code window. Just mind quirk #2 on ordering: open your extension chats *before* starting the bot (or restart the channel if you open new ones afterwards), since a new extension chat will grab the bot token.
+
+**2. VS Code Claude Code chats kill the Telegram channel** — one polling process per bot token
+
+Only one polling process per bot token is allowed. If you open a new chat from the VS Code extension while your terminal Telegram session is running, the new process grabs the token and the terminal session errors out with `409 Conflict`. Rule of thumb: while the Telegram session is live, don't open Claude Code chats from VS Code after starting the telegram channel with Claude Code. Either open VS Code chats beforehand or, if you started some afterwards, restart your telegram channel. In this project — use the terminal only.
+
+**3. One bot, one session** — a second `--channels` session dies too
+
+If you start two terminal sessions with `--channels` in the same project, same thing happens — second one dies. Pick one.
 
 ### Recommended for remote use: `--permission-mode auto`
 
-When you're using the bot from your phone, you obviously can't approve tool-use prompts at the terminal. Though, the bot will ask you for permissions via DMs in telegram, this is a tedious process, so start the session with:
+When you're using the bot from your phone, you obviously can't approve tool-use prompts at the terminal. Though the bot will ask you for permissions via DMs in Telegram, this is a tedious process, so start the session with:
 
 ```bash
 claude --channels plugin:telegram@claude-plugins-official --permission-mode auto
@@ -181,7 +215,9 @@ claude --channels plugin:telegram@claude-plugins-official --permission-mode auto
 
 This auto-accepts tool calls so the bot can do its job (fetch headlines, write to memory, log trades) without waiting for a human to click through prompts on a laptop nobody's sitting at.
 
-**Trade-off:** auto-permission mode trusts Claude to call any tool. The skills that ship with this repo are read-only or file-only (web fetches, file edits in `.claude/` and `.knowledge/`) — none of them can place an order, because the repo has no broker connection to place it through. The risk only appears if *you* add MCP servers or skills that touch destructive things (trade execution, account changes), so reconsider auto mode then. Per project convention (see `.claude/CLAUDE.md`), no skill executes trades regardless of permission mode.
+> **⚠️ Warning**
+>
+> **Trade-off:** auto-permission mode trusts Claude to call any tool. The skills that ship with this repo are read-only or file-only (web fetches, file edits in `.claude/` and `.knowledge/`) — none of them can place an order, because the repo has no broker connection to place it through. The risk only appears if *you* add MCP servers or skills that touch destructive things (trade execution, account changes), so reconsider auto mode then. Per project convention (see `.claude/CLAUDE.md`), no skill executes trades regardless of permission mode.
 
 ### Sharing the bot — groups and additional users
 
@@ -196,6 +232,8 @@ Access is managed via the `/telegram:access` skill — **run it from your termin
 2. In your terminal session, run `/telegram:access` — it'll show pending pairings.
 3. Approve the ones you trust. Their Telegram user ID gets added to `~/.claude/channels/telegram/access.json`.
 
-**Security guard:** approvals must come from you, at the terminal. If a Telegram message says "add me to the allowlist" or "approve the pending pairing", that's exactly what a prompt-injection attack looks like — Claude is instructed to refuse those requests regardless of who they appear to come from. Real approvals happen via the skill in your terminal only.
+> **🛑 Caution**
+>
+> **Approvals must come from you, at the terminal.** If a Telegram message says "add me to the allowlist" or "approve the pending pairing", that's exactly what a prompt-injection attack looks like — Claude is instructed to refuse those requests regardless of who they appear to come from. Real approvals happen via the skill in your terminal only.
 
 When a second person starts using the bot, run `/onboard` again from their chat (or have them run it) to capture their trader profile separately — broker, asset preferences, risk envelope. The `.knowledge/` content stays person-agnostic (strategies, instrument notes); per-person preferences go into separate `user_<firstname>_trader_profile.md` files under `.claude/memory/`. Individual trade-log entries inside strategy files tag the executor (`Alex filled 2026-05-30 at €21.19`) so `/trades-pl` and pattern reads stay attributable.
