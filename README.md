@@ -120,7 +120,7 @@ You can drive Claude from your phone via a Telegram bot — ask for a market bri
 
 ### Setup
 
-Run `/onboard` first, then in your terminal:
+Run `/onboard` first (if you have not already), then in your terminal:
 
 ```bash
 /plugin install telegram@claude-plugins-official
