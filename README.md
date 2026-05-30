@@ -20,7 +20,7 @@ The repo ships **empty** of trading state. Run `/onboard` in your first chat to 
 ## ✅ Requirements
 
 - **[Claude Code](https://claude.com/claude-code)** — the CLI this workspace runs in. Install it first.
-- **A paid Claude plan** — a `claude.ai` **Pro plan ($20/mo) at minimum** to run Claude Code. A subscription is **preferred over an API key** — at the moment it's far cheaper for this kind of usage. (Other ways to authenticate and cheaper or free routes exist, but they're not explored here.)
+- **A paid Claude plan** — a `claude.ai` **Pro subscription ($20/mo) to run Claude Code. A subscription is **preferred over an API key** — at the moment it's far cheaper for this kind of usage. (Other ways to authenticate and cheaper or free routes exist, but they're not explored here.)
 - **git** — to clone the repo (and for the `/git-update` skill).
 - **A terminal** — works in the VS Code Claude Code extension too, but the Telegram bot below needs a real terminal session.
 
