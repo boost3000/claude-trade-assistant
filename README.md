@@ -1,6 +1,6 @@
 # Claude Trade Assistant
 
-A Claude Code workspace for retail trading. Acts as a research analyst, briefing-writer, trade-idea generator, and execution log — built around your broker, your asset preferences, and your style.
+A Claude Code workspace for retail trading. Acts as a research analyst, briefing-writer, trade-idea generator, and trade journal — built around your broker, your asset preferences, and your style. It does **not** place orders (see [Trading safety](#trading-safety)).
 
 The repo ships **empty** of trading state. Run `/onboard` in your first chat to teach Claude who you are and what you trade. From there, memory and the knowledge base grow as you use it.
 
@@ -87,17 +87,34 @@ After onboarding, your own preferences and broker quirks get added alongside.
 
 ## Trading safety
 
-This repo deals with real money. The project-level instructions in `.claude/CLAUDE.md` tell Claude to:
+**This repo cannot place trades.** Out of the box it has no broker connection, no order-routing API, and no execution capability of any kind — it reads data, researches, and writes notes to files. Claude can draft a trade idea or log one you've *already* taken, but it has no path to send an order to your broker. You place every order yourself.
+
+It still drives real-money *decisions*, so the project-level instructions in `.claude/CLAUDE.md` tell Claude to:
 
 - Be explicit about fees, spreads, tax, FX assumptions.
 - Flag anything that could lose money if wrong.
-- **Never auto-execute trades** without explicit human confirmation, regardless of permission mode.
+- **Never execute trades.** There's no execution path here by default; this rule is a guardrail in case you ever wire up a broker integration yourself. Even then, no order would go out without explicit human confirmation, regardless of permission mode.
 
 Treat Claude's output as research, not advice. You place the orders.
 
 ## Driving Claude from your phone
 
 Two options to ping Claude from your phone while the session runs on your laptop: the **built-in `/remote-control` command** (quick to start, single-user, session-bound) and the **Telegram bot plugin** (more setup, but persistent, shareable, group-capable).
+
+At a glance:
+
+| | `/remote-control` (built-in) | Telegram bot (plugin) |
+| --- | --- | --- |
+| **Setup** | None — type `/remote-control` or start with `--remote-control` | Install plugin, paste bot token, approve your user ID, relaunch with `--channels` |
+| **Persistence** | Session-bound — dies when the terminal closes or the laptop sleeps | Persistent — the bot keeps its identity across restarts |
+| **Users** | Single user only | Multiple — pair additional people individually |
+| **Group chats** | No | Yes — add the bot to a Telegram group |
+| **Client on your phone** | Browser or Claude mobile app (open the URL / scan the QR) | The Telegram app you already have |
+| **Push notifications** | Claude-decided only (v2.1.110+) — no per-event pings | Per-event pings configurable |
+| **Where it runs** | Any session, including the VS Code extension | Real terminal only — not the VS Code extension |
+| **Commands** | `/mcp`, `/plugin`, `/resume` stay terminal-only | Full command set over chat |
+| **Requirements** | Claude Code v2.1.51+, `claude.ai` subscription | Telegram account + bot token + the plugin |
+| **Best for** | Occasional solo pings while away from the desk | Shared / always-on access and group workflows |
 
 ### Quick option — `/remote-control` (built-in)
 
@@ -164,7 +181,7 @@ claude --channels plugin:telegram@claude-plugins-official --permission-mode auto
 
 This auto-accepts tool calls so the bot can do its job (fetch headlines, write to memory, log trades) without waiting for a human to click through prompts on a laptop nobody's sitting at.
 
-**Trade-off:** auto-permission mode trusts Claude to call any tool. The trading workflows in this repo are mostly read-only (web fetches, file edits in `.claude/` and `.knowledge/`) — but if you add MCP servers or skills that touch destructive things (trade execution, account changes), reconsider. Per project convention (see `.claude/CLAUDE.md`), no skill auto-executes trades regardless of permission mode.
+**Trade-off:** auto-permission mode trusts Claude to call any tool. The skills that ship with this repo are read-only or file-only (web fetches, file edits in `.claude/` and `.knowledge/`) — none of them can place an order, because the repo has no broker connection to place it through. The risk only appears if *you* add MCP servers or skills that touch destructive things (trade execution, account changes), so reconsider auto mode then. Per project convention (see `.claude/CLAUDE.md`), no skill executes trades regardless of permission mode.
 
 ### Sharing the bot — groups and additional users
 
