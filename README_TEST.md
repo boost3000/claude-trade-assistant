@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/boost3000-logo.svg" alt="boost3000" width="480">
+
 # 📈 Claude Trade Assistant
 
 **A Claude Code workspace for retail trading** — research analyst, briefing-writer,
