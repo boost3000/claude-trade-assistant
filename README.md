@@ -4,6 +4,18 @@ A Claude Code workspace for retail trading. Acts as a research analyst, briefing
 
 The repo ships **empty** of trading state. Run `/onboard` in your first chat to teach Claude who you are and what you trade. From there, memory and the knowledge base grow as you use it.
 
+## Requirements
+
+- **[Claude Code](https://claude.com/claude-code)** — the CLI this workspace runs in. Install it first.
+- **A paid Claude plan** — a `claude.ai` **Pro plan ($20/mo) at minimum** to run Claude Code. A subscription is **preferred over an API key** — at the moment it's far cheaper for this kind of usage. (Other ways to authenticate and cheaper or free routes exist, but they're not explored here.)
+- **git** — to clone the repo (and for the `/git-update` skill).
+- **A terminal** — works in the VS Code Claude Code extension too, but the Telegram bot below needs a real terminal session.
+
+Optional, for driving Claude from your phone (see below):
+
+- **`/remote-control`** — Claude Code **v2.1.51+** and a `claude.ai` subscription. No extra install.
+- **Telegram bot** — a Telegram account and a bot token, plus the `telegram@claude-plugins-official` plugin.
+
 ## Quickstart
 
 ```bash
@@ -135,6 +147,8 @@ claude --channels plugin:telegram@claude-plugins-official
 ### Critical quirks — read this before you waste an evening debugging
 
 1. **You MUST use a real terminal.** The `claude --channels …` invocation only works in a terminal session — **not** in the VS Code Claude Code extension. The extension cannot forward inbound Telegram messages to Claude; the bot will poll, receive your messages, and silently drop them. Outbound (Claude → Telegram) works in either, but you need both directions to actually use the bot remotely.
+
+   **Recommended setup — keep everything in one VS Code window.** The VS Code *integrated terminal* counts as a real terminal, so you don't need to leave the IDE. Use the Claude Code **extension** for your normal day-to-day chats, and the **integrated terminal** to run `claude --channels …` for the bot. That way every Claude session tied to this repo lives in a single VS Code window. Just mind quirk #2 below on ordering: open your extension chats *before* starting the bot (or restart the channel if you open new ones afterwards), since a new extension chat will grab the bot token.
 
 2. **VS Code Claude Code chats kill the Telegram channel.** Only one polling process per bot token is allowed. If you open a new chat from the VS Code extension while your terminal Telegram session is running, the new process grabs the token and the terminal session errors out with `409 Conflict`. Rule of thumb: while the Telegram session is live, don't open Claude Code chats from VS Code after starting the telegram channel with Claude Code. Either open VS Code chats beforehand or, if you started some afterwards, restart your telegram channel. in this project — use the terminal only.
 
